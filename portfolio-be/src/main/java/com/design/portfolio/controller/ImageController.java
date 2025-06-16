@@ -1,5 +1,6 @@
 package com.design.portfolio.controller;
 
+import com.design.portfolio.dto.MediaItemDTO;
 import com.design.portfolio.service.ImageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -35,53 +36,24 @@ public class ImageController {
     }
 
 
-    @GetMapping("/")
-    public String listUploadedFiles(Model model) throws Exception {
-
-        model.addAttribute("files", imageService.loadAll().map(
-                        path -> MvcUriComponentsBuilder.fromMethodName(ImageController.class,
-                                "serveFile", path.getFileName().toString()).build().toUri().toString())
-                .collect(Collectors.toList()));
-
-        return "uploadForm";
-    }
+//    @GetMapping("/")
+//    public String listUploadedFiles(Model model) throws Exception {
+//
+//        model.addAttribute("files", imageService.loadAll().map(
+//                        path -> MvcUriComponentsBuilder.fromMethodName(ImageController.class,
+//                                "serveFile", path.getFileName().toString()).build().toUri().toString())
+//                .collect(Collectors.toList()));
+//
+//        return "uploadForm";
+//    }
 
 
     @GetMapping("/images")
-    public ResponseEntity<List<Resource>> getImage() {
-        try {
-            List<Resource> r = new ArrayList<>();
-            Path filePath = Paths.get(uploadDir);
-            Resource resource = new UrlResource(filePath.toUri());
-            r.add(resource);
-
-            if (resource.exists()) {
-
-//                resource.getInputStream().
-
-                return ResponseEntity.ok()
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(r);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (MalformedURLException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<List<MediaItemDTO>> getImage() throws IOException {
+        List<MediaItemDTO> allImages = imageService.getAllImages();
+        return ResponseEntity.ok(allImages);
     }
 
 
-    @GetMapping("/files/{filename:.+}")
-    @ResponseBody
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-
-        Resource file = imageService.loadAsResource(filename);
-
-        if (file == null)
-            return ResponseEntity.notFound().build();
-
-        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-    }
 
 }
