@@ -7,7 +7,6 @@ import com.design.portfolio.dto.valueobjects.ImageType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,12 +17,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.stream.Stream;
 
 @Validated
 @Slf4j
@@ -44,7 +41,7 @@ public class ImageService {
 
     public ImageResponse upload(MultipartFile meta, ImageUploadRequest request) throws Exception {
 
-        String heigh = request.getHeigh();
+        String heigh = request.getHeig();
         String width = request.getWidth();
         String fileName = request.getFileName();
         String gridId = request.getGridId();
