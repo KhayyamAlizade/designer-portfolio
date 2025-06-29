@@ -10,10 +10,14 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class MediaItemDTO {
+    private Long id;
+    private final String proxy="http://localhost:8080";
     private String fileName;
     private String fileType;
-    private int width;
-    private int height;
-    private String ratioType;
-    private String base64;
+    private String title;
+    private String imagePath;
+
+    private int groupIndex;
+    private int rowIndex;
+    private int columnIndex;
 }

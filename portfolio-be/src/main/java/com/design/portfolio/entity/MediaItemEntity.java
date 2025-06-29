@@ -1,19 +1,19 @@
 package com.design.portfolio.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.*;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
 @Entity
+@Table(name = "media_item_entity")
 public class MediaItemEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
+    private String imageName;
     private String title;
-    private String height;
-    private String width;
     private String author;
     private String publishedDate;
     private String imagePath;
@@ -21,4 +21,6 @@ public class MediaItemEntity {
     private int groupIndex;
     private int rowIndex;
     private int columnIndex;
+
+
 }
