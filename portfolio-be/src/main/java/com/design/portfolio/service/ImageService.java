@@ -7,11 +7,19 @@ import com.design.portfolio.dto.valueobjects.ImageType;
 import com.design.portfolio.entity.MediaItemEntity;
 import com.design.portfolio.mapper.ImageMapper;
 import com.design.portfolio.repository.ImageRepository;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +28,8 @@ import java.util.List;
 @Service
 public class ImageService {
 
+    @Value("${file.upload-dir}")
+    private Path mediaPath;
     private final ImageMapper imageMapper;
     private final ImageRepository imageRepository;
 
@@ -33,7 +43,26 @@ public class ImageService {
 
     public ImageResponse upload(MultipartFile meta, ImageUploadRequest request) throws Exception {
 
-        meta.
+        try {
+            if (meta.isEmpty()) {
+                throw new StorageException("Failed to store empty file.");
+            }
+            Path destinationFile = this.mediaPath.resolve(
+                            Paths.get(meta.getOriginalFilename()))
+                    .normalize().toAbsolutePath();
+            if (!destinationFile.getParent().equals(this.mediaPath.toAbsolutePath())) {
+                // This is a security check
+                throw new StorageException(
+                        "Cannot store file outside current directory.");
+            }
+            try (InputStream inputStream = meta.getInputStream()) {
+                Files.copy(inputStream, destinationFile,
+                        StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+        catch (IOException e) {
+            throw new StorageException("Failed to store file.", e);
+        }
 
         double ratio = widthDouble / heightDouble;
 

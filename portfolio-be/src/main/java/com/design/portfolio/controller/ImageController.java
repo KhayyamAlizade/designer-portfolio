@@ -2,8 +2,8 @@ package com.design.portfolio.controller;
 
 import com.design.portfolio.dto.MediaItemDTO;
 import com.design.portfolio.dto.request.ImageUploadRequest;
+import com.design.portfolio.dto.response.ImageResponse;
 import com.design.portfolio.service.ImageService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,8 +24,8 @@ public class ImageController {
 
 
     @PostMapping("/upload")
-    public ResponseEntity<MediaItemDTO> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam ImageUploadRequest imageUploadRequest) {
-           imageService.
+    public ResponseEntity<MediaItemDTO> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam ImageUploadRequest imageUploadRequest) throws Exception {
+        imageService.upload(file, imageUploadRequest)
         return null;
     }
 
