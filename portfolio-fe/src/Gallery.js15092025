@@ -1,0 +1,123 @@
+import './Gallery.css';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const GROUP_COUNT = 8;
+const ITEMS_PER_GROUP = 15;
+const COLUMNS_PER_ROW = 3;
+const ROWS_PER_GROUP = 5;
+
+const GROUP_ROW_HEIGHTS = [
+    [500, 260, 340, 280, 320],
+    [310, 250, 330, 270, 300],
+    [295, 270, 350, 290, 310],
+    [305, 255, 345, 285, 315],
+    [290, 260, 335, 275, 305],
+    [300, 240, 360, 295, 325],
+    [315, 250, 320, 265, 310],
+    [305, 265, 340, 270, 300]
+];
+
+const COLUMN_WIDTHS = [
+    ['45%', '35%', '20%'],
+    ['40%', '30%', '30%'],
+    ['30%', '40%', '30%'],
+    ['24%', '43%', '33%'],
+    ['32%', '36%', '32%']
+];
+
+const Gallery = () => {
+    const [mediaItems, setMediaItems] = useState([]);
+    const [selectedImage, setSelectedImage] = useState(null);
+
+    useEffect(() => {
+        axios.get('/api/media/page/HOME/images')
+            .then(response => setMediaItems(response.data))
+            .catch(error => console.error('Veri alınamadı:', error));
+    }, []);
+
+    // MediaItem'ları group, row, column'a göre organize et
+    const groupedItems = Array.from({ length: GROUP_COUNT }, () =>
+        Array.from({ length: ROWS_PER_GROUP }, () =>
+            Array.from({ length: COLUMNS_PER_ROW }, () => null)
+        )
+    );
+
+    mediaItems.forEach(item => {
+        const { groupIndex, rowIndex, columnIndex } = item;
+        if (
+            groupIndex < GROUP_COUNT &&
+            rowIndex < ROWS_PER_GROUP &&
+            columnIndex < COLUMNS_PER_ROW
+        ) {
+            groupedItems[groupIndex][rowIndex][columnIndex] = item;
+        }
+    });
+
+    const handleImageClick = (image) => {
+        if (image) {
+            setSelectedImage(image);
+        }
+    };
+
+    const handleClose = () => {
+        setSelectedImage(null);
+    };
+
+    const renderGroup = (groupIndex, groupData) => {
+        const rows = [];
+        for (let row = 0; row < ROWS_PER_GROUP; row++) {
+            const height = GROUP_ROW_HEIGHTS[groupIndex % GROUP_ROW_HEIGHTS.length][row];
+            const widths = COLUMN_WIDTHS[row % COLUMN_WIDTHS.length];
+
+            rows.push(
+                <div key={`g-${groupIndex}-r-${row}`} className="image-row" style={{ height: `${height}px` }}>
+                    {groupData[row].map((item, colIndex) => (
+                        <div
+                            key={`g-${groupIndex}-r-${row}-c-${colIndex}`}
+                            className="image-cell"
+                            style={{ width: widths[colIndex], height: '100%' }}
+                            onClick={() => handleImageClick(item)}
+                        >
+                            {item ? (
+                                <img
+                                    src={`${item.proxy || ''}/${item.imagePath}/${item.fileName}`}
+                                    alt={item.title}
+                                    className="image-item"
+                                    loading="lazy"
+                                />
+                            ) : (
+                                <div className="empty-cell"></div>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        return <div key={`group-${groupIndex}`} className="image-group">{rows}</div>;
+    };
+
+    return (
+        <div className="gallery-container">
+            {groupedItems.map((group, index) => renderGroup(index, group))}
+
+            {/* Modal */}
+            {selectedImage && (
+                <div className="modal-overlay" onClick={handleClose}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        <img
+                            src={`${selectedImage.proxy || ''}/${selectedImage.imagePath}/${selectedImage.fileName}`}
+                            alt={selectedImage.title}
+                            className="modal-image"
+                        />
+                        <p className="modal-title">{selectedImage.title}</p>
+                        <button className="modal-close" onClick={handleClose}>✕</button>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default Gallery;

@@ -1,0 +1,77 @@
+/* Gallery.css */
+
+/*EVVEL OLAN HANISIKI BUDA ELA IDI */
+/*.gallery-container {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 4px;*/
+/*    width: 100%;*/
+/*    max-width: 1440px;*/
+/*    margin: 0 auto;*/
+/*    padding: 48px 24px;*/
+/*    box-sizing: border-box;*/
+/*}*/
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    width: 100%;
+    max-width: none;         /* ← 1440px sınırını kaldır */
+    margin: 0;               /* ← ortalamayı kaldır */
+    padding: 0;              /* ← kenar boşluklarını kaldır */
+    box-sizing: border-box;
+}
+
+
+.image-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.image-row {
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.image-cell {
+    overflow: hidden;
+    border-radius: 0;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-cell:hover {
+    transform: scale(1.015);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.image-item {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: inherit;
+}
+
+@media (max-width: 1024px) {
+    .gallery-container {
+        padding: 32px 16px;
+    }
+    .image-row {
+        flex-direction: column;
+        height: auto !important;
+    }
+    .image-cell {
+        width: 100% !important;
+        height: auto !important;
+    }
+    .image-item {
+        height: auto;
+    }
+}

@@ -1,0 +1,94 @@
+import './Gallery.css';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+
+const GROUP_COUNT = 8;
+const ITEMS_PER_GROUP = 15;
+const COLUMNS_PER_ROW = 3;
+const ROWS_PER_GROUP = 5;
+
+const GROUP_ROW_HEIGHTS = [
+    [500, 260, 340, 280, 320],
+    [310, 250, 330, 270, 300],
+    [295, 270, 350, 290, 310],
+    [305, 255, 345, 285, 315],
+    [290, 260, 335, 275, 305],
+    [300, 240, 360, 295, 325],
+    [315, 250, 320, 265, 310],
+    [305, 265, 340, 270, 300]
+];
+
+const COLUMN_WIDTHS = [
+    ['45%', '35%', '20%'],
+    ['40%', '30%', '30%'],
+    ['30%', '40%', '30%'],
+    ['24%', '43%', '33%'],
+    ['32%', '36%', '32%']
+];
+
+const Gallery = () => {
+    const [mediaItems, setMediaItems] = useState([]);
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/api/media/page/HOME/images') // full yol gerekmez, proxy varsa localhost:8080 yazma
+            .then(response => setMediaItems(response.data))
+            .catch(error => console.error('Veri alınamadı:', error));
+    }, []);
+
+    // MediaItem'ları group, row, column'a göre organize et
+    const groupedItems = Array.from({ length: GROUP_COUNT }, () =>
+        Array.from({ length: ROWS_PER_GROUP }, () =>
+            Array.from({ length: COLUMNS_PER_ROW }, () => null)
+        )
+    );
+
+    mediaItems.forEach(item => {
+        const { groupIndex, rowIndex, columnIndex } = item;
+        if (
+            groupedItems[groupIndex] &&
+            groupedItems[groupIndex][rowIndex] &&
+            columnIndex < COLUMNS_PER_ROW
+        ) {
+            groupedItems[groupIndex][rowIndex][columnIndex] = item;
+        }
+    });
+
+    const renderGroup = (groupIndex, groupData) => {
+        const rows = [];
+        for (let row = 0; row < ROWS_PER_GROUP; row++) {
+            const height = GROUP_ROW_HEIGHTS[groupIndex][row];
+            const widths = COLUMN_WIDTHS[row % COLUMN_WIDTHS.length];
+
+            rows.push(
+                <div key={`g-${groupIndex}-r-${row}`} className="image-row" style={{ height: `${height}px` }}>
+                    {groupData[row].map((item, colIndex) => (
+                        <div
+                            key={`g-${groupIndex}-r-${row}-c-${colIndex}`}
+                            className="image-cell"
+                            style={{ width: widths[colIndex], height: '100%' }}
+                        >
+                            {item ? (
+                                    <img
+                                        src={`/${item.imagePath}/${item.fileName}`}
+                                    alt = {item.title}
+                                    className="image-item"
+                                    loading="lazy"
+                                />
+                            ) : null}
+                        </div>
+                    ))}
+                </div>
+            );
+        }
+
+        return <div key={`group-${groupIndex}`} className="image-group">{rows}</div>;
+    };
+
+    return (
+        <div className="gallery-container">
+            {groupedItems.map((group, index) => renderGroup(index, group))}
+        </div>
+    );
+};
+
+export default Gallery;

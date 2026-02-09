@@ -1,0 +1,27 @@
+.app-container {
+    background-color: #000;
+    min-height: 100vh;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Header ve navigation */
+.app-header {
+    padding: 20px;
+    text-align: center;
+}
+
+
+.nav-bar {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    font-size: 2rem; /* büyük yazılar */
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+/* Galeri bölümü */
+.gallery-section {
+    padding: 40px 20px;
+}
