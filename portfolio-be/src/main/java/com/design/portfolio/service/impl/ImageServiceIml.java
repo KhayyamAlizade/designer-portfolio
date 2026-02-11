@@ -1,6 +1,7 @@
 package com.design.portfolio.service.impl;
 
 import com.design.portfolio.dto.MediaItemDTO;
+import com.design.portfolio.dto.request.ImageUploadRequest;
 import com.design.portfolio.dto.valueobjects.PageType;
 import com.design.portfolio.entity.MediaItemEntity;
 import com.design.portfolio.exceptions.ImagesNotFoundException;
@@ -29,7 +30,7 @@ import java.util.Objects;
 @Service
 public class ImageServiceIml implements ImageService {
 
-    @Value("${file.home-upload-dir}")
+    @Value("${file.upload-dir}")
     private Path mediaPath;
     private final ImageMapper imageMapper;
     private final ImageRepository imageRepository;
@@ -42,40 +43,40 @@ public class ImageServiceIml implements ImageService {
 
 
     @Override
-    public void uploadImage(PageType page, MultipartFile file, Long id) throws ImagesNotFoundException {
-        MediaItemEntity entity = imageRepository.findMediaItemEntityByPageTypeAndId(page, id)
-                .stream()
-                .findFirst()
-                .orElseThrow(() -> new ImagesNotFoundException("File not found.Download Fail!"));
-
-        Path uploadDir = Paths.get(mediaPath.toUri());
-        Path oldFilePath = Paths.get(entity.getImagePath(), entity.getImageName());
-        Path newFilePath = uploadDir.resolve(Objects.requireNonNull(file.getOriginalFilename()));
-
-        try {
-
-//            Util.deleteFile(oldFilePath.toFile());
-
-
-            Files.createDirectories(uploadDir);
-
-
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, newFilePath, StandardCopyOption.REPLACE_EXISTING);
-            }
-
-            log.info("File uploaded: {}", newFilePath);
-        } catch (IOException ex) {
-            log.error("uploadImage error", ex);
-            throw new ImagesNotFoundException("Photo not downloaded: " + ex.getMessage());
-        }
-
-
-        entity.setImageName(file.getOriginalFilename());
-        entity.setPublishedDate(LocalDate.now().toString());
-        entity.setImagePath(uploadDir.toString());
-
-        imageRepository.save(entity);
+    public void uploadImage(MultipartFile file, ImageUploadRequest request) throws ImagesNotFoundException {
+//        MediaItemEntity entity = (MediaItemEntity) imageRepository.findMediaItemEntityByPageTypeAndId(page, id)
+//                .stream()
+//                .findFirst()
+//                .orElseThrow(() -> new ImagesNotFoundException("File not found.Download Fail!"));
+//
+//        Path uploadDir = Paths.get(mediaPath.toUri());
+//        Path oldFilePath = Paths.get(entity.getImagePath(), entity.getImageName());
+//        Path newFilePath = uploadDir.resolve(Objects.requireNonNull(file.getOriginalFilename()));
+//
+//        try {
+//
+////            Util.deleteFile(oldFilePath.toFile());
+//
+//
+//            Files.createDirectories(uploadDir);
+//
+//
+//            try (InputStream inputStream = file.getInputStream()) {
+//                Files.copy(inputStream, newFilePath, StandardCopyOption.REPLACE_EXISTING);
+//            }
+//
+//            log.info("File uploaded: {}", newFilePath);
+//        } catch (IOException ex) {
+//            log.error("uploadImage error", ex);
+//            throw new ImagesNotFoundException("Photo not downloaded: " + ex.getMessage());
+//        }
+//
+//
+//        entity.setImageName(file.getOriginalFilename());
+//        entity.setPublishedDate(LocalDate.now().toString());
+//        entity.setImagePath(uploadDir.toString());
+//
+//        imageRepository.save(entity);
     }
 
 
@@ -87,8 +88,8 @@ public class ImageServiceIml implements ImageService {
 
 
     @Override
-    public List<MediaItemDTO> getAllImages(PageType page) throws ImagesNotFoundException {
-        List<MediaItemEntity> all = imageRepository.findByPageType(page);
+    public List<MediaItemDTO> getAllHomeImages() throws ImagesNotFoundException {
+        List<MediaItemEntity> all = imageRepository.findAll();
         List<MediaItemDTO> images = new ArrayList<>();
         if (!all.isEmpty()) {
             all.stream().map(imageMapper::toDTO).forEach(images::add);

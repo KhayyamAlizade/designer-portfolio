@@ -1,0 +1,3 @@
+CREATE DATABASE portfolio;
+CREATE USER postgres WITH PASSWORD 'postgres';
+GRANT ALL PRIVILEGES ON DATABASE mydb TO myuser;

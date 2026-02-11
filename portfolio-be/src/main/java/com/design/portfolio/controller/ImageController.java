@@ -3,6 +3,8 @@ package com.design.portfolio.controller;
 import com.design.portfolio.dto.MediaItemDTO;
 import com.design.portfolio.dto.request.ImageUploadRequest;
 import com.design.portfolio.dto.response.ImageResponse;
+import com.design.portfolio.dto.valueobjects.PageType;
+import com.design.portfolio.exceptions.ImagesNotFoundException;
 import com.design.portfolio.service.ImageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +27,7 @@ public class ImageController {
 
     @PostMapping("/upload")
     public ResponseEntity<MediaItemDTO> uploadImage(@RequestParam("file") MultipartFile file, @RequestParam ImageUploadRequest imageUploadRequest) throws Exception {
-        imageService.upload(file, imageUploadRequest)
+        imageService.uploadImage(file, imageUploadRequest);
         return null;
     }
 
@@ -35,9 +37,9 @@ public class ImageController {
     }
 
 
-    @GetMapping("/images")
-    public ResponseEntity<List<MediaItemDTO>> getImage() {
-        List<MediaItemDTO> allImages = imageService.getAllImages();
+    @GetMapping("/home/images")
+    public ResponseEntity<List<MediaItemDTO>> getImage() throws ImagesNotFoundException {
+        List<MediaItemDTO> allImages = imageService.getAllHomeImages();
         return ResponseEntity.ok(allImages);
     }
 

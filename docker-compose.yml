@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./portfolio-be
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: ./portfolio-fe
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: portfolio
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
