@@ -5,6 +5,9 @@ services:
     build: ./portfolio-be
     ports:
       - "8080:8080"
+    volumes:
+      - ./media:/app/media
+
 
   frontend:
     build: ./portfolio-fe
