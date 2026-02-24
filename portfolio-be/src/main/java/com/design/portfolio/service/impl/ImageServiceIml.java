@@ -2,7 +2,6 @@ package com.design.portfolio.service.impl;
 
 import com.design.portfolio.dto.MediaItemDTO;
 import com.design.portfolio.dto.request.ImageUploadRequest;
-import com.design.portfolio.dto.valueobjects.PageType;
 import com.design.portfolio.entity.MediaItemEntity;
 import com.design.portfolio.exceptions.ImagesNotFoundException;
 import com.design.portfolio.mapper.ImageMapper;
@@ -14,16 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Validated
 @Slf4j
@@ -92,7 +84,7 @@ public class ImageServiceIml implements ImageService {
         List<MediaItemEntity> all = imageRepository.findAll();
         List<MediaItemDTO> images = new ArrayList<>();
         if (!all.isEmpty()) {
-            all.stream().map(imageMapper::toDTO).forEach(images::add);
+            all.stream().map(imageMapper::toMediaDTO).forEach(images::add);
         } else {
             log.error("ActionFound.getAllImages.images is empty");
             throw new ImagesNotFoundException("Shekiller yuklenerken xeta vbas verdi");

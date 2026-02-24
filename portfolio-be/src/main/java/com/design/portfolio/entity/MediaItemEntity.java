@@ -12,6 +12,9 @@ import lombok.*;
 public class MediaItemEntity {
     @Id
     private Long id;
+
+    @Enumerated(EnumType.STRING)
+    private String pageType;
     private String imageName;
     private String title;
     private String author;

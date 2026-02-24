@@ -15,6 +15,8 @@ public interface ImageMapper {
     @Mapping(target = "groupIndex", source = "entity.groupIndex")
     @Mapping(target = "rowIndex", source = "entity.rowIndex")
     @Mapping(target = "columnIndex", source = "entity.columnIndex")
-     MediaItemDTO toDTO(MediaItemEntity entity);
+     MediaItemDTO toMediaDTO(MediaItemEntity entity);
+
+    MediaItemEntity toMediaEntity(MediaItemDTO dto);
 
 }
